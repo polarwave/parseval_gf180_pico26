@@ -1,9 +1,9 @@
 #!/bin/bash
 # ========================================================================
-# Start script for ICD@JKU docker images (VNC)
+# Start script for ICD@JKU docker images (use for Jupyter Notebooks only)
 #
 # SPDX-FileCopyrightText: 2022-2026 Harald Pretl and Georg Zachl
-# Johannes Kepler University, Department for Integrated Circuits 
+# Johannes Kepler University, Department for Integrated Circuits
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,6 +18,8 @@
 # limitations under the License.
 # SPDX-License-Identifier: Apache-2.0
 # ========================================================================
+
+NB_STARTED=0
 
 if [ -n "${DRY_RUN}" ]; then
 	echo "[INFO] This is a dry run, all commands will be printed to the shell (Commands printed but not executed are marked with $)!"
@@ -34,18 +36,9 @@ if [ -z ${DESIGNS+z} ]; then
 fi
 
 # Set the host ports, and disable them with 0. Only used if not set as shell variables!
-if [ -z ${WEBSERVER_PORT+z} ]; then
-	WEBSERVER_PORT=80
-fi
-
-if [ -z ${VNC_PORT+z} ]; then
-	VNC_PORT=5901
-fi
-
 if [ -z ${JUPYTER_PORT+z} ]; then
 	JUPYTER_PORT=8888
 fi
-
 if [ -z ${DOCKER_USER+z} ]; then
 	DOCKER_USER="hpretl"
 fi
@@ -59,7 +52,7 @@ if [ -z ${DOCKER_TAG+z} ]; then
 fi
 
 if [ -z ${CONTAINER_NAME+z} ]; then
-	CONTAINER_NAME="iic-osic-tools_chipathon_xvnc_uid_"$(id -u)
+	CONTAINER_NAME="iic-osic-tools_chipathon_jupyter_uid_"$(id -u)
 fi
 
 if [[ "$OSTYPE" == "linux"* ]]; then
@@ -101,24 +94,9 @@ fi
 
 # Processing ports and other parameters
 # Fixed potential errors in the container due to reduced access to syscalls.
-if [ -n "${IIC_SERVER_DEPLOYMENT}" ]; then
-	PARAMS=""
-else
-	PARAMS="--security-opt seccomp=unconfined"
-fi
-if [ "$WEBSERVER_PORT" -gt 0 ]; then
-	PARAMS="$PARAMS -p $WEBSERVER_PORT:80"
-fi
-if [ "$VNC_PORT" -gt 0 ]; then
-	PARAMS="$PARAMS -p $VNC_PORT:5901"
-fi
-
+PARAMS="--security-opt seccomp=unconfined"
 if [ "${JUPYTER_PORT}" -gt 0 ]; then
 	PARAMS="$PARAMS -p $JUPYTER_PORT:8888"
-fi
-
-if [ -n "${VNC_PW}" ]; then
-	PARAMS="${PARAMS} -e VNC_PW=${VNC_PW}"
 fi
 
 if [ -n "${IIC_OSIC_TOOLS_QUIET}" ]; then
@@ -135,7 +113,7 @@ if [ "$(docker ps -q -f name="${CONTAINER_NAME}")" ]; then
 	echo "[HINT] It can also be stopped with \"docker stop ${CONTAINER_NAME}\" and removed with \"docker rm ${CONTAINER_NAME}\" if required."
 	echo
 	echo -n "Press \"s\" to stop, and \"r\" to stop & remove: "
-	read -r -n 1 k <&1
+	read -r -n 1 k </dev/tty
 	echo
 	if [[ $k = s ]] ; then
 		${ECHO_IF_DRY_RUN} docker stop "${CONTAINER_NAME}"
@@ -149,19 +127,22 @@ elif [ "$(docker ps -aq -f name="${CONTAINER_NAME}")" ]; then
 	echo "[HINT] It can also be restarted with \"docker start ${CONTAINER_NAME}\" or removed with \"docker rm ${CONTAINER_NAME}\" if required."
 	echo
 	echo -n "Press \"s\" to start, and \"r\" to remove: "
-	read -r -n 1 k <&1
+	read -r -n 1 k </dev/tty
 	echo
 	if [[ $k = s ]] ; then
 		${ECHO_IF_DRY_RUN} docker start "${CONTAINER_NAME}"
+		NB_STARTED=1
 	elif [[ $k = r ]] ; then
 		${ECHO_IF_DRY_RUN} docker rm "${CONTAINER_NAME}"
 	fi
 else
 	[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] Container does not exist, creating ${CONTAINER_NAME} ..."
 	# Finally, run the container, and sets DISPLAY to the local display number
-	#${ECHO_IF_DRY_RUN} docker pull "${DOCKER_USER}/${DOCKER_IMAGE}:${DOCKER_TAG}"
+	${ECHO_IF_DRY_RUN} docker pull "${DOCKER_USER}/${DOCKER_IMAGE}:${DOCKER_TAG}" > /dev/null
 	# Disable SC2086, $PARAMS must be globbed and splitted.
 	# shellcheck disable=SC2086
-	${ECHO_IF_DRY_RUN} docker run -d --user "${CONTAINER_USER}:${CONTAINER_GROUP}" $PARAMS -v "$DESIGNS":"/foss/designs":rw --name "${CONTAINER_NAME}" "${DOCKER_USER}/${DOCKER_IMAGE}:${DOCKER_TAG}" > /dev/null
-	[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && [ "$WEBSERVER_PORT" -gt 0 ] && echo "[INFO] To access the VNC session, open a browser and navigate to http://localhost:${WEBSERVER_PORT}/?password=${VNC_PW:-abc123}"
+	${ECHO_IF_DRY_RUN} docker run -d --user "${CONTAINER_USER}:${CONTAINER_GROUP}" $PARAMS -v "$DESIGNS":"/foss/designs":rw --name "${CONTAINER_NAME}" "${DOCKER_USER}/${DOCKER_IMAGE}:${DOCKER_TAG}" -s /dockerstartup/scripts/run_GL.sh
+	NB_STARTED=1
 fi
+
+[ $NB_STARTED = 1 ] && echo "[INFO] Jupyter Notebook is running, point your browser to <http://localhost:8888>."

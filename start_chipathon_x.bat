@@ -40,52 +40,25 @@ IF "%DOCKER_TAG%"=="" SET DOCKER_TAG=chipathon26
 IF "%CONTAINER_USER%"=="" SET CONTAINER_USER=1000
 IF "%CONTAINER_GROUP%"=="" SET CONTAINER_GROUP=1000
 
-IF "%CONTAINER_NAME%"=="" SET CONTAINER_NAME=iic-osic-tools_chipathon_xvnc
+IF "%CONTAINER_NAME%"=="" SET CONTAINER_NAME=iic-osic-tools_chipathon_xserver
 
-IF "%WEBSERVER_PORT%"=="" (
-  SET /a WEBSERVER_PORT=80
-) ELSE (
-  SET /a WEBSERVER_PORT=%WEBSERVER_PORT%
-)
-echo Webserver port set to %WEBSERVER_PORT%
-
-IF "%VNC_PORT%"=="" (
-  SET /a VNC_PORT=5901
-) ELSE (
-  SET /a VNC_PORT=%VNC_PORT%
-)
-echo VNC port set to %VNC_PORT%
+IF "%DISP%"=="" SET DISP=:0
+IF "%WAYLAND_DISP%"=="" SET WAYLAND_DISP=wayland-0
 
 IF "%JUPYTER_PORT%"=="" SET JUPYTER_PORT=8888
 
 IF %CONTAINER_USER% NEQ 0 if %CONTAINER_USER% LSS 1000 echo WARNING: Selected User ID %CONTAINER_USER% is below 1000. This ID might interfere with User-IDs inside the container and cause undefined behaviour!
 IF %CONTAINER_GROUP% NEQ 0 if %CONTAINER_GROUP% LSS 1000 echo WARNING: Selected Group ID %CONTAINER_GROUP% is below 1000. This ID might interfere with Group-IDs inside the container and cause undefined behaviour!
 
-IF DEFINED IIC_SERVER_DEPLOYMENT (
-  SET PARAMS=""
-) ELSE (
-  SET PARAMS=--security-opt seccomp=unconfined
-)
-
-IF %WEBSERVER_PORT% GTR 0 (
-  SET PARAMS=%PARAMS% -p %WEBSERVER_PORT%:80
-)
-
-IF %VNC_PORT% GTR 0 (
-  SET PARAMS=%PARAMS% -p %VNC_PORT%:5901
-)
-
 IF %JUPYTER_PORT% GTR 0 (
   SET PARAMS=%PARAMS% -p %JUPYTER_PORT%:8888
 )
-
-IF DEFINED VNC_PW (
-  SET PARAMS=%PARAMS% -e VNC_PW=%VNC_PW%
-)
+SET PARAMS=--security-opt seccomp=unconfined
 
 IF DEFINED DOCKER_EXTRA_PARAMS (
   SET PARAMS=%PARAMS% %DOCKER_EXTRA_PARAMS%
 )
+
 
 docker container inspect %CONTAINER_NAME% 2>&1 | find "Status" | find /i "running"
 IF NOT ERRORLEVEL 1 (
@@ -95,14 +68,8 @@ IF NOT ERRORLEVEL 1 (
     IF NOT ERRORLEVEL 1 (
         echo Container %CONTAINER_NAME% exists. Restart with \"docker start %CONTAINER_NAME%\" or remove with \"docker rm %CONTAINER_NAME%\" if required.
     ) ELSE (
-        echo Container does not exist, creating %CONTAINER_NAME% ...
-        %ECHO_IF_DRY_RUN% docker run -d --user %CONTAINER_USER%:%CONTAINER_GROUP% %PARAMS% -v "%DESIGNS%":/foss/designs --name %CONTAINER_NAME% %DOCKER_USER%/%DOCKER_IMAGE%:%DOCKER_TAG%
-        IF %WEBSERVER_PORT% GTR 0 (
-            IF DEFINED VNC_PW (
-                echo [INFO] To access the VNC session, open a browser and navigate to http://localhost:%WEBSERVER_PORT%/?password=%VNC_PW%
-            ) ELSE (
-                echo [INFO] To access the VNC session, open a browser and navigate to http://localhost:%WEBSERVER_PORT%/?password=abc123
-            )
-        )
+	echo Container does not exist, pulling %DOCKER_USER%/%DOCKER_IMAGE%:%DOCKER_TAG% and creating %CONTAINER_NAME% ...
+        %ECHO_IF_DRY_RUN% docker pull %DOCKER_USER%/%DOCKER_IMAGE%:%DOCKER_TAG%
+        %ECHO_IF_DRY_RUN% docker run -d --user %CONTAINER_USER%:%CONTAINER_GROUP% -e DISPLAY=%DISP% -e WAYLAND_DISPLAY=%WAYLAND_DISP% -e XDG_RUNTIME_DIR=/mnt/wslg/runtime-dir -e PULSE_SERVER=/mnt/wslg/PulseServer -v /run/desktop/mnt/host/wslg/.X11-unix:/tmp/.X11-unix -v /run/desktop/mnt/host/wslg:/mnt/wslg --device=/dev/dxg -v /usr/lib/wsl:/usr/lib/wsl %PARAMS% -v "%DESIGNS%":/foss/designs --name %CONTAINER_NAME% %DOCKER_USER%/%DOCKER_IMAGE%:%DOCKER_TAG%
     )
 )
