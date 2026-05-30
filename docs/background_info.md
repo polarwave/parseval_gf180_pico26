@@ -7,7 +7,7 @@ Some Performance Targets for this proposal:
 - Operating bandwidth (input): ≥ 10 MHz for sensor / WPT signals
 - Linear dynamic range (true RMS mode): ≥ 20 dB where output is proportional to RMS within specified error, similar to the linear region reported for the CMOS‑quad RMS detector
 - Extended measurable range (with calibration): ≥ 30 dB total, using characterization tables to correct nonlinearity beyond the intrinsic differntial stage “window.”
-- Response Time Specs: (Vrms) Settling Time <25ns | Threshold Detection Latch Output response <15ns
+- Response Time Specs: (Vrms) Settling Time < Xms (depends on signal freq) | Threshold Detection Latch Output response < (much less than Vrms settling time) 
 
 ### Preliminary Block Diagram
 
