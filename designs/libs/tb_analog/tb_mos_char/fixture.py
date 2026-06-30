@@ -35,11 +35,11 @@ def netlist_test_bench(netlist_file):
 #======================================================
 # PVT Header
 #======================================================
-def netlist_pvt_header(corner="typical", vdd=3.3, i_ref=50e-6):
+def netlist_pvt_header(corner="typical", vdda=3.3, i_bias=50e-6):
     netlist = ""
     netlist += netlist_model(corner)
-    netlist += netlist_power(vdd=vdd)
-    netlist += netlist_bias(i_ref=i_ref)
+    netlist += netlist_power(vdda=vdda)
+    netlist += netlist_bias(i_bias=i_bias)
     return netlist
 
 def netlist_model(corner="typical"):
@@ -49,46 +49,54 @@ def netlist_model(corner="typical"):
     .include /foss/pdks/gf180mcuD/libs.tech/ngspice/design.ngspice
     .lib /foss/pdks/gf180mcuD/libs.tech/ngspice/sm141064.ngspice {corner}
     """
-
-def netlist_power(vdd=3.3):
+def netlist_power(vdda=3.3):
     return f"""
     * ---------------- Power Supplies ----------------
-    V_vss vss GND 0
-    V_vdd vdd vss {vdd}
+    V_vssa vssa GND 0
+    V_vdda vdda vssa {vdda}
     """
 
-def netlist_bias(i_ref=50e-6):
+def netlist_bias(i_bias=50e-6):
     return f"""
     * ---------------- Bias Current ----------------
-    I_ref vdd i_ref {i_ref}
+    I_bias vdda i_bias {i_bias}
     """
 
 #======================================================
 # Testbench Wiring and Stimulus
 #======================================================
-
-def netlist_stimulus_dc(vin_cm=1.5):
-    return f""" 
+def netlist_feedback_unity():
+    return f"""
+    * ---------------- Feedback Connections ----------------
+    V_jumper_fb out in_n 0
+    V_jumper_in in in_p 0
+    """
+def netlist_stimulus_dc(vin_dc=1.5):
+    return f"""
     * ---------------- Stimulus ----------------
-    V_inp vinp vss {vin_cm}
-    V_inn vinn vss {vin_cm}
+    V_src in vssa {vin_dc}
+    """
+def netlist_stimulus_ac(vin_dc=1.5):
+    return f"""
+    * ---------------- Stimulus ----------------
+    V_src in vssa {vin_dc} AC 1
+    """
+def netlist_stimulus_sin(vin_dc=1.5, freq=1e6, amp=100e-3, t_delay=0, theta=0, phase=0):
+    return f"""
+    * ---------------- Stimulus ----------------
+    V_src in vssa SIN({vin_dc} {amp} {freq}, {t_delay}, {theta}, {phase})
+    """
+def netlist_stimulus_gate(vin_dc=1.5):
+    return f"""
+    * ---------------- VGS ----------------
+    V_GS vgs vss {vin_dc}
+    """
+def netlist_stimulus_drain(vin_dc=1.5):
+    return f"""
+    * ---------------- VGS ----------------
+    V_DS vds vss {vin_dc}
     """
 
-def netlist_stimulus_ac_(vin_cm=1.5, vin_diff_ac=1.0):
-    ac_amp = vin_diff_ac / 2
-    return f"""
-    * ---------------- Stimulus (diff AC) ----------------
-    V_inp vinp vss {vin_cm} AC {ac_amp}
-    V_inn vinn vss {vin_cm} AC {-ac_amp}
-    """
-
-def netlist_stimulus_sin_diff( vin_cm=1.5, vin_diff=100e-3, freq=1e6, t_delay=0, theta=0, phase=0):
-    amp = vin_diff / 2
-    return f"""
-    * ---------------- Stimulus (diff sine) ----------------
-    V_inp vinp vss SIN({vin_cm} {amp} {freq} {t_delay} {theta} {phase})
-    V_inn vinn vss SIN({vin_cm} {-amp} {freq} {t_delay} {theta} {phase})
-    """
 #======================================================
 # Simulation Control Blocks
 #======================================================
@@ -102,12 +110,12 @@ def netlist_sim_op(filename="op.log"):
 
     """
 
-def netlist_sim_dc(start=0, stop=3.3, step=0.01, filename="results.raw"):
+def netlist_sim_dc_transfer(start=0, stop=3.3, step=0.01, filename="results.raw"):
     return f"""
     * ---------------- Simulation DC sweep ----------------
     .control
     save all
-    DC vin_cm {start} {stop} {step}
+    DC V_GS {start} {stop} {step}
     write {filename}
     .endc
 

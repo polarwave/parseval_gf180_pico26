@@ -30,14 +30,16 @@ N 350 -220 460 -220 {lab=Mref_src}
 N 220 -110 220 -60 {lab=Iref}
 N 220 -110 460 -110 {lab=Iref}
 N 180 -110 180 -100 {lab=Iref}
+N 280 -220 300 -220 {lab=vdd}
+N 280 -270 280 -220 {lab=vdd}
 C {ipin.sym} 20 -140 0 0 {name=p1 lab=Iref}
 C {iopin.sym} 20 -270 0 1 {name=p2 lab=vdd}
 C {iopin.sym} 20 40 0 1 {name=p3 lab=vss}
 C {opin.sym} 460 -220 0 0 {name=p4 lab=Mref_src}
 C {opin.sym} 460 -110 0 0 {name=p5 lab=Mref_sink}
-C {symbols/nfet_03v3.sym} 150 -60 0 1 {name=M1
-L=0.28u
-W=0.22u
+C {symbols/pfet_05v0.sym} 320 -220 0 1 {name=M2
+L=0.50u
+W=0.30u
 nf=1
 m=1
 ad="'int((nf+1)/2) * W/nf * 0.18u'"
@@ -46,12 +48,12 @@ as="'int((nf+2)/2) * W/nf * 0.18u'"
 ps="'2*int((nf+2)/2) * (W/nf + 0.18u)'"
 nrd="'0.18u / W'" nrs="'0.18u / W'"
 sa=0 sb=0 sd=0
-model=nfet_03v3
+model=pfet_05v0
 spiceprefix=X
 }
-C {symbols/pfet_03v3.sym} 320 -220 0 1 {name=M2
-L=0.28u
-W=0.22u
+C {symbols/nfet_05v0.sym} 150 -60 0 1 {name=M1
+L=0.60u
+W=0.30u
 nf=1
 m=1
 ad="'int((nf+1)/2) * W/nf * 0.18u'"
@@ -60,12 +62,12 @@ as="'int((nf+2)/2) * W/nf * 0.18u'"
 ps="'2*int((nf+2)/2) * (W/nf + 0.18u)'"
 nrd="'0.18u / W'" nrs="'0.18u / W'"
 sa=0 sb=0 sd=0
-model=pfet_03v3
+model=nfet_05v0
 spiceprefix=X
 }
-C {symbols/nfet_03v3.sym} 280 -60 0 0 {name=M3
-L=0.28u
-W=0.22u
+C {symbols/nfet_05v0.sym} 280 -60 0 0 {name=M3
+L=0.60u
+W=0.30u
 nf=1
 m=1
 ad="'int((nf+1)/2) * W/nf * 0.18u'"
@@ -74,6 +76,6 @@ as="'int((nf+2)/2) * W/nf * 0.18u'"
 ps="'2*int((nf+2)/2) * (W/nf + 0.18u)'"
 nrd="'0.18u / W'" nrs="'0.18u / W'"
 sa=0 sb=0 sd=0
-model=nfet_03v3
+model=nfet_05v0
 spiceprefix=X
 }

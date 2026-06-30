@@ -37,3 +37,4 @@ bezier=1}
 T {@path         @schname_ext} 235 5 0 0 0.4 0.4 {}
 T {@author} 235 -25 0 0 0.4 0.4 {}
 T {SCHEM} 5 -25 0 0 1 1 {}
+T {SSCS PICO Chipathon 2026} 730 -30 0 0 0.4 0.4 {}
