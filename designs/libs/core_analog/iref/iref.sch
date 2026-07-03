@@ -36,10 +36,10 @@ C {ipin.sym} 20 -140 0 0 {name=p1 lab=Iref}
 C {iopin.sym} 20 -270 0 1 {name=p2 lab=vdd}
 C {iopin.sym} 20 40 0 1 {name=p3 lab=vss}
 C {opin.sym} 460 -220 0 0 {name=p4 lab=Mref_src}
-C {opin.sym} 460 -110 0 0 {name=p5 lab=Mref_sink}
+C {opin.sym} 460 -110 0 0 {name=p5 lab=Iref}
 C {symbols/pfet_05v0.sym} 320 -220 0 1 {name=M2
-L=0.50u
-W=0.30u
+L=\{L_PBIAS\}
+W=\{W_PBIAS\}
 nf=1
 m=1
 ad="'int((nf+1)/2) * W/nf * 0.18u'"
@@ -52,8 +52,8 @@ model=pfet_05v0
 spiceprefix=X
 }
 C {symbols/nfet_05v0.sym} 150 -60 0 1 {name=M1
-L=0.60u
-W=0.30u
+L=\{L_BIAS\}
+W=\{W_BIAS\}
 nf=1
 m=1
 ad="'int((nf+1)/2) * W/nf * 0.18u'"
@@ -66,10 +66,10 @@ model=nfet_05v0
 spiceprefix=X
 }
 C {symbols/nfet_05v0.sym} 280 -60 0 0 {name=M3
-L=0.60u
-W=0.30u
+L=\{L_BIAS\}
+W=\{W_BIAS\}
 nf=1
-m=1
+m=2
 ad="'int((nf+1)/2) * W/nf * 0.18u'"
 pd="'2*int((nf+1)/2) * (W/nf + 0.18u)'"
 as="'int((nf+2)/2) * W/nf * 0.18u'"

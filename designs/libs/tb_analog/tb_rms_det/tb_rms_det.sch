@@ -38,7 +38,7 @@ C {lab_pin.sym} 1100 -400 3 0 {name=p9 sig_type=std_logic lab=vss}
 C {lab_pin.sym} 200 -440 0 0 {name=p10 sig_type=std_logic lab=i_ref}
 C {capa.sym} 1320 -390 0 0 {name=C1
 m=1
-value=100n
+value=\{c_avg\}
 footprint=1206
 device="ceramic capacitor"}
 C {lab_pin.sym} 1320 -340 3 0 {name=p11 sig_type=std_logic lab=vss}

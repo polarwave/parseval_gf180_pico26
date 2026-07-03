@@ -74,7 +74,7 @@ def netlist_stimulus_dc(vin_cm=1.5):
     V_inn vinn vss {vin_cm}
     """
 
-def netlist_stimulus_ac_(vin_cm=1.5, vin_diff_ac=1.0):
+def netlist_stimulus_ac_(vin_cm=2.5, vin_diff_ac=1.0): 
     ac_amp = vin_diff_ac / 2
     return f"""
     * ---------------- Stimulus (diff AC) ----------------

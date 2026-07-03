@@ -28,10 +28,10 @@ C {iopin.sym} 10 -390 0 1 {name=p2 lab=vdd}
 C {iopin.sym} 20 -20 0 1 {name=p3 lab=vss}
 C {opin.sym} 320 -200 0 0 {name=p4 lab=vrms}
 C {symbols/pfet_05v0.sym} 100 -310 0 0 {name=M1
-L=0.50u
-W=0.30u
+L=\{L_EVEN\}
+W=\{W_EVEN\}
 nf=1
-m=1
+m=\{M_EVEN\}
 ad="'int((nf+1)/2) * W/nf * 0.18u'"
 pd="'2*int((nf+1)/2) * (W/nf + 0.18u)'"
 as="'int((nf+2)/2) * W/nf * 0.18u'"
@@ -42,8 +42,8 @@ model=pfet_05v0
 spiceprefix=X
 }
 C {symbols/nfet_05v0.sym} 100 -110 0 0 {name=M2
-L=0.60u
-W=0.30u
+L=\{L_OUT\}
+W=\{W_OUT\}
 nf=1
 m=1
 ad="'int((nf+1)/2) * W/nf * 0.18u'"

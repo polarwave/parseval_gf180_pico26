@@ -17,7 +17,7 @@ L 7 0 40 0 60 {}
 B 5 -2.5 -62.5 2.5 -57.5 {name=vdd dir=inout}
 B 5 147.5 -22.5 152.5 -17.5 {name=Mref_src dir=out}
 B 5 -152.5 -2.5 -147.5 2.5 {name=Iref dir=in}
-B 5 147.5 17.5 152.5 22.5 {name=Mref_sink dir=out}
+B 5 147.5 17.5 152.5 22.5 {name=Iref dir=out}
 B 5 -2.5 57.5 2.5 62.5 {name=vss dir=inout}
 P 4 5 130 -40 -130 -40 -130 40 130 40 130 -40 {}
 T {@symname} -36 -6 0 0 0.3 0.3 {}
