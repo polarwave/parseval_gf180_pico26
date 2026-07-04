@@ -4,9 +4,6 @@ x1 vdd net2 net1 vinp vinn i_ref vss quad_diff_in
 x2 vdd net2 i_ref vss iref
 x3 vdd net1 vrms vss rms_out
 C1 vrms vss {c_avg}
-**** begin user architecture code
-External Averaging Capacitor
-**** end user architecture code
 **.ends
 
 * expanding   symbol:  libs/core_analog/quad_diff_in/quad_diff_in.sym # of pins=7
@@ -27,9 +24,9 @@ XM3 Mref_even vinp net2 vss nfet_05v0 L={L_UNIT} W={W_UNIT} nf=1 ad='int((nf+1)/
 XM4 Mref_even vinn net1 vss nfet_05v0 L={L_UNIT} W={W_UNIT} nf=1 ad='int((nf+1)/2) * W/nf * 0.18u' as='int((nf+2)/2) * W/nf * 0.18u'
 + pd='2*int((nf+1)/2) * (W/nf + 0.18u)' ps='2*int((nf+2)/2) * (W/nf + 0.18u)' nrd='0.18u / W' nrs='0.18u / W' sa=0 sb=0 sd=0
 XM5 net1 Mref_sink vss vss nfet_05v0 L={L_BIAS} W={W_BIAS} nf=1 ad='int((nf+1)/2) * W/nf * 0.18u' as='int((nf+2)/2) * W/nf * 0.18u'
-+ pd='2*int((nf+1)/2) * (W/nf + 0.18u)' ps='2*int((nf+2)/2) * (W/nf + 0.18u)' nrd='0.18u / W' nrs='0.18u / W' sa=0 sb=0 sd=0 m={N_SKEW
-XM6 net2 Mref_sink vss vss nfet_05v0 L={L_BIAS} W={W_BIAS} nf=1 ad='int((nf+1)/2) * W/nf * 0.18u' as='int((nf+2)/2) * W/nf * 0.18u' pd='2*int((nf+1)/2)
-+ * (W/nf + 0.18u)' ps='2*int((nf+2)/2) * (W/nf + 0.18u)' nrd='0.18u / W' nrs='0.18u / W' sa=0 sb=0 sd=0 m={N_SKEW
++ pd='2*int((nf+1)/2) * (W/nf + 0.18u)' ps='2*int((nf+2)/2) * (W/nf + 0.18u)' nrd='0.18u / W' nrs='0.18u / W' sa=0 sb=0 sd=0 m={N_SKEW+1}
+XM6 net2 Mref_sink vss vss nfet_05v0 L={L_BIAS} W={W_BIAS} nf=1 ad='int((nf+1)/2) * W/nf * 0.18u' as='int((nf+2)/2) * W/nf * 0.18u'
++ pd='2*int((nf+1)/2) * (W/nf + 0.18u)' ps='2*int((nf+2)/2) * (W/nf + 0.18u)' nrd='0.18u / W' nrs='0.18u / W' sa=0 sb=0 sd=0 m={N_SKEW+1}
 XM7 Mref_even Mref_src vdd vdd pfet_05v0 L={L_PBIAS} W={W_PBIAS} nf=1 ad='int((nf+1)/2) * W/nf * 0.18u' as='int((nf+2)/2) * W/nf * 0.18u'
 + pd='2*int((nf+1)/2) * (W/nf + 0.18u)' ps='2*int((nf+2)/2) * (W/nf + 0.18u)' nrd='0.18u / W' nrs='0.18u / W' sa=0 sb=0 sd=0
 XM8 Mref_even Mref_even vdd vdd pfet_05v0 L={L_EVEN} W={W_EVEN} nf=1 ad='int((nf+1)/2) * W/nf * 0.18u' as='int((nf+2)/2) * W/nf * 0.18u'

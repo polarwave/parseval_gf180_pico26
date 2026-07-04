@@ -2,13 +2,12 @@ v {xschem version=3.4.8RC file_version=1.3}
 G {}
 K {}
 V {}
-S {External Averaging Capacitor}
 F {}
 E {}
 P 3 6 1290 -490 1290 -280 1390 -280 1390 -490 1290 -490 1290 -470 {}
 T {TI LM134: Current Source IC to be used} 10 -480 0 0 0.2 0.2 {}
 T {Datasheet: https://www.ti.com/lit/ds/symlink/lm334.pdf} 10 -470 0 0 0.1 0.1 {}
-T {External Averaging Capacitor} 1270 -510 0 0 0.2 0.2 {}
+T {Off-Chip Averaging Capacitor} 1260 -510 0 0 0.2 0.2 {}
 N 890 -450 950 -450 {lab=#net1}
 N 500 -460 520 -460 {lab=#net2}
 N 520 -490 520 -460 {lab=#net2}
